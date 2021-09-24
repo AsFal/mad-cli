@@ -1,0 +1,6 @@
+vendor
+VERSION
+bin
+dist
+node_modules
+package*.json
