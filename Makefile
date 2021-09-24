@@ -1,9 +1,5 @@
 VERSION := $(shell bash scripts/version.sh; cat VERSION)
 
-.PHONY: setup-githooks
-setup-githooks:
-	cp githooks/pre-commit.sh .git/hooks/pre-commit
-
 .PHONY: vet
 vet:
 	go vet ./...
@@ -11,6 +7,10 @@ vet:
 .PHONY: lint
 lint:
 	golint ./...
+
+.PHONY: lint
+format:
+	go fmt ./...
 
 .PHONY: verify
 verify: vet lint
