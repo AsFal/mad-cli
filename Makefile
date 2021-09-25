@@ -41,4 +41,4 @@ release: version
 
 .PHONY: run
 run: bin-darwin
-	@./bin/mad-cli-$(VERSION)-darwin-amd64 generate screen --app Menu --name MenuForm
+	@./bin/mad-cli-$(VERSION)-darwin-amd64 generate screen --app Menu --name Menu
