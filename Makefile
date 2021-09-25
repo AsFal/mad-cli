@@ -26,17 +26,19 @@ version:
 	@bash scripts/version.sh
 	@echo "Version: $(shell cat VERSION)"
 
-.PHONY: test-unit
-bin:
+bin-%:
 	@mkdir -p bin
-	@GOOS=linux GOARCH=amd64 go build -o bin/mad-cli-$(VERSION)-linux-amd64 -ldflags "-X github.com/MohamedBeydoun/mad-cli/cmd.version=$(shell cat VERSION)"
-	@echo "Generated bin/mad-cli-$(VERSION)-linux-amd64"
-	@GOOS=windows GOARCH=amd64 go build -o bin/mad-cli-$(VERSION)-windows-amd64 -ldflags "-X github.com/MohamedBeydoun/mad-cli/cmd.version=$(shell cat VERSION)"
-	@echo "Generated bin/mad-cli-$(VERSION)-windows-amd64"
-	@GOOS=darwin GOARCH=amd64 go build -o bin/mad-cli-$(VERSION)-darwin-amd64 -ldflags "-X github.com/MohamedBeydoun/mad-cli/cmd.version=$(shell cat VERSION)"
-	@echo "Generated bin/mad-cli-$(VERSION)-darwin-amd6"4
+	@GOOS=$* GOARCH=amd64 go build -o bin/mad-cli-$(VERSION)-$*-amd64 
+	@echo "Generated bin/mad-cli-$(VERSION)-$*-amd64"
+
+.PHONY: test-unit
+bin: bin-linux bin-windows bin-darwin
 
 .PHONY: release
 release: version
 	@bash scripts/release.sh $(shell cat VERSION)
 	@echo "Release complete!
+
+.PHONY: run
+run: bin-darwin
+	@./bin/mad-cli-$(VERSION)-darwin-amd64 generate screen --app Menu --name MenuForm

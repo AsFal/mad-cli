@@ -2,6 +2,8 @@ package cmd
 
 import (
 	"fmt"
+	"mad-cli/pkg/generator"
+	"os"
 
 	"github.com/spf13/cobra"
 )
@@ -9,28 +11,49 @@ import (
 // generateCmd represents the generate command
 var generateCmd = &cobra.Command{
 	Use:   "generate",
-	Short: "A brief description of your command",
-	Long: `A longer description that spans multiple lines and likely contains examples
-and usage of using your command. For example:
+	Short: "Generates application modules",
+	Long:  "Generates application modules following mad React Native folder conventions",
+}
 
-Cobra is a CLI library for Go that empowers applications.
-This application is a tool to generate the needed files
-to quickly create a Cobra application.`,
+type screenCmdFlags struct {
+	name string
+	app  string
+}
+
+func parseScreenCmdFlags(cmd *cobra.Command) (screenCmdFlags, error) {
+	var err error
+	flags := screenCmdFlags{}
+
+	flags.name, err = cmd.Flags().GetString("name")
+	if err != nil {
+		return flags, err
+	}
+	flags.app, err = cmd.Flags().GetString("app")
+	if err != nil {
+		return flags, err
+	}
+	return flags, nil
+}
+
+var screenCmd = &cobra.Command{
+	Use:   "screen",
+	Short: "Generates a new Screen",
+	Long:  "Generates a new Screen",
 	Run: func(cmd *cobra.Command, args []string) {
-		fmt.Println("generate called")
+		flags, err := parseScreenCmdFlags(cmd)
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
+
+		generator.GenerateScreen(flags.app, flags.name)
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(generateCmd)
 
-	// Here you will define your flags and configuration settings.
-
-	// Cobra supports Persistent Flags which will work for this command
-	// and all subcommands, e.g.:
-	// generateCmd.PersistentFlags().String("foo", "", "A help for foo")
-
-	// Cobra supports local flags which will only run when this command
-	// is called directly, e.g.:
-	// generateCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
+	generateCmd.AddCommand(screenCmd)
+	screenCmd.Flags().String("name", "n", "The screen name")
+	screenCmd.Flags().String("app", "a", "The application name under which the screen will be nested")
 }
